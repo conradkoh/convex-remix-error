@@ -18,8 +18,8 @@ dependencies:
     specifier: ^1.11.0
     version: 1.11.0(react-dom@18.2.0)(react@18.2.0)
   convex-helpers:
-    specifier: ^0.1.28
-    version: 0.1.28(convex@1.11.0)(react@18.2.0)
+    specifier: 0.1.29-alpha.2
+    version: 0.1.29-alpha.2(convex@1.11.0)(react@18.2.0)
   isbot:
     specifier: ^4.1.0
     version: 4.4.0
@@ -2154,8 +2154,8 @@ packages:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
     dev: true
 
-  /convex-helpers@0.1.28(convex@1.11.0)(react@18.2.0):
-    resolution: {integrity: sha512-mXUUnao9ZX8vZIPNXhSaeRUP4oNCb8KMtGzPFGrnyTZFOpZn1zuN+KovAuBTdA04vbYmwnnSq8k/CRt5MRKFcQ==}
+  /convex-helpers@0.1.29-alpha.2(convex@1.11.0)(react@18.2.0):
+    resolution: {integrity: sha512-SXKRJ+yU+gB4bDAT63HAgF54ReTWxF+Ddxcp/Ix7/k5xbt/BrUSGJEOSey2KmqasAXtjr3D7/i5iO3F6NV/zhQ==}
     peerDependencies:
       convex: ^1.11.0
       hono: ^4.0.5

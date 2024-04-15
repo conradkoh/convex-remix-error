@@ -8,7 +8,11 @@ export default function Layout() {
   //2. the local storage value is not stored
   return (
     <div>
-      <SessionProvider storageKey="sessionId" useStorage={useLocalStorage}>
+      <SessionProvider
+        storageKey="sessionId"
+        useStorage={useLocalStorage}
+        ssrFriendly
+      >
         <h1>App Layout</h1>
         <Outlet />
       </SessionProvider>
