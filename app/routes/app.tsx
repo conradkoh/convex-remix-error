@@ -10,6 +10,14 @@ export default function Layout() {
   // This example is not working. It is taken from https://stack.convex.dev/track-sessions-without-cookies
   //1. there are type errors
   //2. the local storage value is not stored
+  runFunc({
+    onClient: () => {
+      console.log('Client rendering layout');
+    },
+    onServer: () => {
+      console.log('Server rendering layout');
+    },
+  });
   return (
     <div>
       <SafeSessionProvider storageKey="sessionId" useStorage={useLocalStorage}>
@@ -65,7 +73,14 @@ function RequireSessionId({ children }: { children: React.ReactNode }) {
  */
 function DebugSessionId() {
   const [sessionId] = useSessionId();
-  console.log({ sessionId });
+  runFunc({
+    onClient: () => {
+      console.log('debugging session on client. session id = ', sessionId);
+    },
+    onServer: () => {
+      console.log('debugging session on server. session id = ', sessionId);
+    },
+  });
   return <h2>Debugger</h2>;
 }
 
@@ -107,3 +122,12 @@ const useLocalStorage = function (
     },
   ] satisfies [SessionId | null, (value: SessionId) => void];
 };
+
+function runFunc(p: { onClient: () => void; onServer: () => void }) {
+  const isServer = typeof window === 'undefined';
+  if (isServer) {
+    p.onServer();
+  } else {
+    p.onClient();
+  }
+}
