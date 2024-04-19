@@ -7,9 +7,6 @@ import {
 import { SessionId } from 'convex-helpers/server/sessions';
 import { useEffect, useState } from 'react';
 export default function Layout() {
-  // This example is not working. It is taken from https://stack.convex.dev/track-sessions-without-cookies
-  //1. there are type errors
-  //2. the local storage value is not stored
   runFunc({
     onClient: () => {
       console.log('Client rendering layout');
@@ -18,53 +15,16 @@ export default function Layout() {
       console.log('Server rendering layout');
     },
   });
+  console.log('re-rendering layout');
   return (
     <div>
-      <SafeSessionProvider storageKey="sessionId" useStorage={useLocalStorage}>
+      <SessionProvider storageKey="sessionId" useStorage={useLocalStorage}>
         <h1>App Layout</h1>
         <DebugSessionId />
         <Outlet />
-      </SafeSessionProvider>
+      </SessionProvider>
     </div>
   );
-}
-
-/**
- * Safe wrapper around convex's session provider that ensures
- * 1. There are no hydration errors by only rendering children after hydration
- * 2. Children are not rendered until the session id is ready to be consumed
- * @param param0
- * @returns
- */
-
-const SafeSessionProvider: typeof SessionProvider = (props) => {
-  // eslint-disable-next-line react/prop-types
-  const { children, ...sessionProviderProps } = props;
-  return (
-    // Client only prevents hydration errors, since both server and initial render will be empty
-    <ClientOnly>
-      <SessionProvider {...sessionProviderProps}>
-        {/* RequireSessionId enforces that children will not render until session id is ready to be consumed */}
-        <RequireSessionId>{children}</RequireSessionId>
-      </SessionProvider>
-    </ClientOnly>
-  );
-};
-
-function ClientOnly({ children }: { children: React.ReactNode }) {
-  const [render, setRender] = useState(false);
-  useEffect(() => {
-    setRender(true);
-  }, []);
-  return render ? <>{children}</> : null;
-}
-
-function RequireSessionId({ children }: { children: React.ReactNode }) {
-  const [sessionId] = useSessionId();
-  if (!sessionId) {
-    return <></>;
-  }
-  return <>{children}</>;
 }
 
 /**
@@ -75,7 +35,11 @@ function DebugSessionId() {
   const [sessionId] = useSessionId();
   runFunc({
     onClient: () => {
-      console.log('debugging session on client. session id = ', sessionId);
+      console.log(
+        'debugging session on client. session id = ',
+        sessionId,
+        typeof sessionId
+      );
     },
     onServer: () => {
       console.log('debugging session on server. session id = ', sessionId);
@@ -94,9 +58,7 @@ const useLocalStorage = function (
   key: string,
   nextSessionId: SessionId
 ): ReturnType<UseStorage<SessionId>> {
-  const [sessionId, setSessionId] = useState<SessionId>(
-    '' as string & { __SessionId: true }
-  );
+  const [sessionId, setSessionId] = useState<SessionId>('' as SessionId);
 
   useEffect(() => {
     //run only on the client
@@ -111,16 +73,17 @@ const useLocalStorage = function (
     }
   }, [key, nextSessionId]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const set = (val: SessionId) => {
     //do nothing - this doesn't seem to be called
-    console.log({ val });
+    // console.log({ val });
   };
   return [
     sessionId, //the value returned here will be used as the source of truth
     (v: SessionId) => {
       set(v);
     },
-  ] satisfies [SessionId | null, (value: SessionId) => void];
+  ] as const;
 };
 
 function runFunc(p: { onClient: () => void; onServer: () => void }) {

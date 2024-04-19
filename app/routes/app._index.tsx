@@ -1,3 +1,6 @@
+import { useSessionId } from 'convex-helpers/react/sessions';
+
 export default function Index() {
-  return <div>app index</div>;
+  const [sessionId] = useSessionId();
+  return <div>app index @ {sessionId}</div>;
 }
